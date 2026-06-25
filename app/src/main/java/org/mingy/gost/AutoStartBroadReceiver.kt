@@ -12,7 +12,7 @@ class AutoStartBroadReceiver : BroadcastReceiver() {
         //开机启动
         val editor = context.getSharedPreferences("data", AppCompatActivity.MODE_PRIVATE)
         val auto_start = editor.getBoolean(PreferencesKey.AUTO_START, false)
-        if (ACTION == intent.action && auto_start) {
+        if ((ACTION == intent.action || "org.mingy.gost.ACTION_START" == intent.action) && auto_start) {
             val gostConfigSet = editor.getStringSet(PreferencesKey.AUTO_START_GOST_LIST, emptySet())
             val gostConfigList = gostConfigSet?.map { GostConfig(it) }
             val configList = gostConfigList ?: emptyList()

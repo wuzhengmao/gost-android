@@ -46,6 +46,12 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".EmptyActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.NoDisplay">
+        </activity>
+
         <receiver
             android:name=".AutoStartBroadReceiver"
             android:enabled="true"
@@ -54,6 +60,9 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
 
                 <category android:name="android.intent.category.HOME" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="org.mingy.gost.ACTION_START" />
             </intent-filter>
         </receiver>
 
