@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <application
         android:allowBackup="true"
@@ -63,6 +64,9 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="org.mingy.gost.ACTION_START" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="org.mingy.gost.ALARM_WAKE"/>
             </intent-filter>
         </receiver>
 
