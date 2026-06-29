@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -57,7 +58,7 @@ class ShellService : LifecycleService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        val gostConfig: ArrayList<GostConfig>? =
+        var gostConfig: ArrayList<GostConfig>? =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 intent?.extras?.getParcelableArrayList(
                     IntentExtraKey.GostConfig, GostConfig::class.java
@@ -66,9 +67,20 @@ class ShellService : LifecycleService() {
                 @Suppress("DEPRECATION") intent?.extras?.getParcelableArrayList(IntentExtraKey.GostConfig)
             }
         if (gostConfig == null) {
-            Log.e("gost", "gostConfig is null")
-            Toast.makeText(this, "gostConfig is null", Toast.LENGTH_SHORT).show()
-            return START_NOT_STICKY
+            if (intent == null) {
+                // 自动拉起
+                val editor = getSharedPreferences("data", AppCompatActivity.MODE_PRIVATE)
+                val auto_start = editor.getBoolean(PreferencesKey.AUTO_START, false)
+                if (auto_start) {
+                    val gostConfigSet = editor.getStringSet(PreferencesKey.AUTO_START_GOST_LIST, emptySet())
+                    gostConfig = ArrayList(gostConfigSet?.map { GostConfig(it) } ?: emptyList())
+                }
+            }
+            if (gostConfig.isNullOrEmpty()) {
+                Log.e("gost", "gostConfig is null")
+                Toast.makeText(this, "gostConfig is null", Toast.LENGTH_SHORT).show()
+                return START_NOT_STICKY
+            }
         }
         when (intent?.action) {
             ShellServiceAction.START -> {
@@ -97,7 +109,7 @@ class ShellService : LifecycleService() {
                 }
             }
         }
-        return START_NOT_STICKY
+        return START_STICKY
     }
 
     private fun startGost(config: GostConfig) {
